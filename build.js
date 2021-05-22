@@ -107,7 +107,7 @@ const tasks = new Listr([
     },
     {
         title: 'Create zip file.',
-        task: async () => createZip(PATH_DIST, PATH_ARCHIVE, 'res-dev-api.zip'),
+        task: async () => createZip(PATH_DIST, PATH_ARCHIVE, 'chobo.zip'),
     },
 ]);
 
