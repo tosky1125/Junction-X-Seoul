@@ -5,13 +5,38 @@ import { ResponseResult } from '../infra/ResponseResult';
 import { UserNotExistError } from '../user/error/UserNotExistError';
 import { InternalServerError } from '../infra/InternalServerError';
 import { GetPracticalCourse } from './service/GetPracticalCourse';
+import { InsertDrivingRecord } from './service/InsertDrivingRecord';
+import { PayloadValidationError } from '../infra/PayloadValidationError';
 
 class DrivingRecordController {
   getRouter():Router {
     const router = Router();
+    router.post('/api/v1/records', this.insertRecord);
     router.get('/api/v1/records/practical', this.getPracticalCourse);
     router.get('/api/v1/records/:userId', this.getRecordByUserId);
     return router;
+  }
+
+  async insertRecord(req:Request, res:Response) {
+    const service = new InsertDrivingRecord();
+    try {
+      await service.execute(req.body);
+      res.status(StatusCode.OK).json({
+        result: ResponseResult.Success,
+      });
+    } catch (e) {
+      if (e instanceof PayloadValidationError) {
+        res.status(StatusCode.BadRequest).json({
+          result: ResponseResult.Fail,
+          message: e.message,
+        });
+      }
+      console.log(e);
+      res.status(StatusCode.ServerError).json({
+        result: ResponseResult.Fail,
+        message: new InternalServerError().message,
+      });
+    }
   }
 
   async getPracticalCourse(req:Request, res:Response) {
