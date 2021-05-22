@@ -82,4 +82,8 @@ export class DrivingRecord {
     this.character = character;
     this.driveAssesments = driveAssesments;
   }
+
+  compareScore(score: number) {
+    return this.total_point - score;
+  }
 }

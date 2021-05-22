@@ -20,9 +20,10 @@ class DrivingRecordController {
   async insertRecord(req:Request, res:Response) {
     const service = new InsertDrivingRecord();
     try {
-      await service.execute(req.body);
+      const data = await service.execute(req.body);
       res.status(StatusCode.OK).json({
         result: ResponseResult.Success,
+        data,
       });
     } catch (e) {
       if (e instanceof PayloadValidationError) {
