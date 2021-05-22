@@ -4,11 +4,11 @@ import { PayloadValidationError } from '../infra/PayloadValidationError';
 export class Tmap {
   private readonly url: string;
 
-  constructor(longitude: string, latitude: string, searchKeyword = '주유소') {
+  constructor(longitude: string, latitude: string, searchKeyword = '주유소', radius = true) {
     if (!longitude || !latitude) {
       throw new PayloadValidationError();
     }
-    this.url = `https://apis.openapi.sk.com/tmap/pois/search/around?version=1&categories=${encodeURI(searchKeyword)}&centerLon=${longitude}&centerLat=${latitude}&radius=5&appKey=l7xx127549c27a8e49fb84d59a5521e53375`;
+    this.url = `https://apis.openapi.sk.com/tmap/pois/search/around?version=1&categories=${encodeURI(searchKeyword)}&centerLon=${longitude}&centerLat=${latitude}&${radius ? 'radius=5' : ''}&appKey=l7xx127549c27a8e49fb84d59a5521e53375`;
   }
 
   async search() {
