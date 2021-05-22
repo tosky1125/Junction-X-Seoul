@@ -37,6 +37,8 @@ export class DrivingRecord {
 
   private character: string[];
 
+  private driveAssesments : any[];
+
   constructor(
     record_id :number,
     user_id :number,
@@ -57,6 +59,7 @@ export class DrivingRecord {
     total_point :number,
     summary :string,
     character: string[],
+    driveAssesments : any[],
   ) {
     this.record_id = record_id;
     this.user_id = user_id;
@@ -77,29 +80,6 @@ export class DrivingRecord {
     this.total_point = total_point;
     this.summary = summary;
     this.character = character;
-  }
-
-  getRecord() {
-    return {
-      record_id: this.record_id,
-      user_id: this.user_id,
-      cruisecontrol: this.cruisecontrol,
-      costing: this.costing,
-      overspeed: this.overspeed,
-      hightorque: this.hightorque,
-      idling: this.idling,
-      anticipation: this.anticipation,
-      driving_time: this.driving_time,
-      engine_on_time: this.engine_on_time,
-      date: this.date,
-      distance: this.distance,
-      start_point: this.start_point,
-      end_point: this.end_point,
-      start_time: this.start_time,
-      end_time: this.end_time,
-      total_point: this.total_point,
-      summary: this.summary,
-      character: this.character,
-    };
+    this.driveAssesments = driveAssesments;
   }
 }
