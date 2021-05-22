@@ -3,13 +3,13 @@ export class ApplicationConfig {
 
   private static dialect = process.env.DATABASE_DIALECT || 'mysql';
 
-  private static host = process.env.DATABASE_HOST || 'database-1.cjapli8daz64.ap-northeast-2.rds.amazonaws.com';
+  private static host = process.env.DATABASE_HOST || 'chobo.cond05qp242q.ap-northeast-2.rds.amazonaws.com';
 
   private static AWSKey = process.env.AWSKey;
 
   private static AWSSecretKey = process.env.AWSSecretKey;
 
-  private static user = process.env.DATABASE_USER || 'admin';
+  private static user = process.env.DATABASE_USER || 'choboAdmin';
 
   private static pw = process.env.DATABASE_PASSWORD || 'admin2021!';
 
