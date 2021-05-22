@@ -1,4 +1,4 @@
-# Junction-X-Seoul
+# Junction-X-Seoul Team Chobo
 ## **Installing**
 
 using npm
