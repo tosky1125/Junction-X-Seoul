@@ -6,14 +6,22 @@ export class User {
 
   private name: string;
 
-  private cars: Car[];
+  private cars: Car[] | null;
 
-  private drivingRecords: DrivingRecord[];
+  private drivingRecords: DrivingRecord[] | null;
 
-  constructor(userId: number, name: string, cars: Car[], drivingRecords: DrivingRecord[]) {
+  constructor(userId: number, name: string, cars?: Car[], drivingRecords?: DrivingRecord[]) {
     this.userId = userId;
     this.name = name;
-    this.cars = cars;
-    this.drivingRecords = drivingRecords;
+    this.cars = cars || null;
+    this.drivingRecords = drivingRecords || null;
+  }
+
+  setDrivingRecords(value: DrivingRecord[]) {
+    this.drivingRecords = value;
+  }
+
+  setCars(value: Car[]) {
+    this.cars = value;
   }
 }
