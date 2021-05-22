@@ -1,3 +1,4 @@
+import moment from 'moment';
 import { DrivingRecordRepository } from '../DrivingRecordRepository';
 import { PayloadValidationError } from '../../infra/PayloadValidationError';
 
@@ -19,7 +20,6 @@ export class InsertDrivingRecord {
       anticipation,
       drivingTime,
       engineOnTime,
-      date,
       distance,
       startPoint,
       endPoint,
@@ -36,7 +36,6 @@ export class InsertDrivingRecord {
       || !anticipation
       || !drivingTime
       || !engineOnTime
-      || !date
       || !distance
       || !startPoint
       || !endPoint
@@ -67,12 +66,12 @@ Compared to the average user, the ability to recognize information and comply wi
       anticipation,
       drivingTime,
       engineOnTime,
-      date,
+      new Date(),
       distance,
       startPoint,
       endPoint,
-      startTime,
-      endTime,
+      moment(startTime).toDate(),
+      moment(endTime).toDate(),
       totalPoint,
       summary);
     let speedResult: string;
