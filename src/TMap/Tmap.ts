@@ -1,5 +1,6 @@
 import request from 'request-promise-native';
 import { PayloadValidationError } from '../infra/PayloadValidationError';
+import { ApplicationConfig } from '../infra/ApplicationConfig';
 
 export class Tmap {
   private readonly url: string;
@@ -8,7 +9,7 @@ export class Tmap {
     if (!longitude || !latitude) {
       throw new PayloadValidationError();
     }
-    this.url = `https://apis.openapi.sk.com/tmap/pois/search/around?version=1&categories=${encodeURI(searchKeyword)}&centerLon=${longitude}&centerLat=${latitude}&${radius ? 'radius=5' : ''}&appKey=l7xx127549c27a8e49fb84d59a5521e53375`;
+    this.url = `https://apis.openapi.sk.com/tmap/pois/search/around?version=1&categories=${encodeURI(searchKeyword)}&centerLon=${longitude}&centerLat=${latitude}&${radius ? 'radius=5' : ''}&appKey=${ApplicationConfig.getTmapApiKey()}`;
   }
 
   async search() {
