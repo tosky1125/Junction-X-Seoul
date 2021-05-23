@@ -34,4 +34,4 @@ To gain testability, dependency has been injected into contactor between layers.
 
 For a in-memory test, query builder has been selected rather than ORM.
 
-https://www.youtube.com/watch?v=RQIzzys8bVo
+https://www.youtube.com/watch?v=CuN09s39ceU&feature=emb_logo
