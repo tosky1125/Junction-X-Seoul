@@ -1,4 +1,7 @@
 # Junction-X-Seoul Team Chobo
+## **Client-Side Application Repository**
+https://github.com/florianldt/JunctionXSeoul2021
+
 ## **API docs**
 https://documenter.getpostman.com/view/12371867/TzXtK16Q
 
