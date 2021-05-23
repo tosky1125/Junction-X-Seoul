@@ -1,4 +1,4 @@
-# Junction-X-Seoul Team Chobo
+# Junction-X-Seoul | Chobo | Team Korea France Collab
 ## **Client-Side Application Repository**
 https://github.com/florianldt/JunctionXSeoul2021
 
