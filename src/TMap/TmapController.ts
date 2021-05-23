@@ -8,7 +8,7 @@ import { InternalServerError } from '../infra/InternalServerError';
 class TmapController {
   getRouter():Router {
     const router = Router();
-    router.post('/api/v1/gasStations/', this.searchGasStation);
+    router.post('/api/v1/search/gasStation', this.searchGasStation);
     router.post('/api/v1/search/', this.searchDestination);
     return router;
   }
