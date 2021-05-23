@@ -1,4 +1,7 @@
 # Junction-X-Seoul Team Chobo
+## **API docs**
+https://documenter.getpostman.com/view/12371867/TzXtK16Q
+
 ## **Installing**
 
 using npm
