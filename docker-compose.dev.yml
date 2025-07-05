@@ -1,0 +1,76 @@
+version: '3.8'
+
+services:
+  # Development mode with hot-reload
+  app-dev:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    container_name: chobo-server-dev
+    restart: unless-stopped
+    ports:
+      - '3000:3000'
+    environment:
+      NODE_ENV: development
+      PORT: 3000
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_USER: chobo_user
+      DB_PASSWORD: chobo_password
+      DB_NAME: chobo_db
+      TMAP_API_KEY: ${TMAP_API_KEY:-your_tmap_api_key}
+      JWT_SECRET: dev-secret-key
+      JWT_EXPIRY: 24h
+    depends_on:
+      mysql:
+        condition: service_healthy
+    networks:
+      - chobo-network
+    volumes:
+      - ./src:/app/src
+      - ./package.json:/app/package.json
+      - ./tsconfig.json:/app/tsconfig.json
+      - ./nodemon.json:/app/nodemon.json
+      - ./.env:/app/.env
+    command: npm run dev
+
+  mysql:
+    image: mysql:8.0
+    container_name: chobo-mysql
+    restart: unless-stopped
+    ports:
+      - '3306:3306'
+    environment:
+      MYSQL_ROOT_PASSWORD: root_password
+      MYSQL_DATABASE: chobo_db
+      MYSQL_USER: chobo_user
+      MYSQL_PASSWORD: chobo_password
+    volumes:
+      - mysql-data:/var/lib/mysql
+    networks:
+      - chobo-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      timeout: 20s
+      retries: 10
+
+  # Database admin tool for development
+  adminer:
+    image: adminer
+    container_name: chobo-adminer
+    restart: unless-stopped
+    ports:
+      - '8080:8080'
+    networks:
+      - chobo-network
+    depends_on:
+      - mysql
+    environment:
+      ADMINER_DEFAULT_SERVER: mysql
+
+networks:
+  chobo-network:
+    driver: bridge
+
+volumes:
+  mysql-data:

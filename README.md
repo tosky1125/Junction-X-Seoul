@@ -89,7 +89,13 @@ Chobo follows a **3-Layer Architecture** pattern:
 
 ### Prerequisites
 
-- Node.js (v14.0.0 or higher)
+#### For Docker Development (Recommended)
+- Docker Desktop
+- Docker Compose
+- Git
+
+#### For Local Development
+- Node.js (v18.0.0 or higher)
 - npm or yarn
 - MySQL 5.7 or higher
 - Git
@@ -152,13 +158,60 @@ AWS_SECRET_ACCESS_KEY=your_secret_key
 
 ### Running the Application
 
-#### Development Mode
-```bash
-# Watch mode with auto-reload
-npm run watch
+#### Using Docker Compose (Recommended) 🐳
 
-# Or with yarn
-yarn watch
+##### Quick Start with Make
+```bash
+# Start development environment
+make dev
+
+# Or start in background
+make up
+
+# View logs
+make logs
+
+# Stop services
+make down
+```
+
+##### Manual Docker Commands
+```bash
+# Development mode with hot-reload
+docker-compose -f docker-compose.dev.yml up
+
+# Production mode
+docker-compose up -d
+
+# View logs
+docker-compose logs -f
+
+# Access database UI (Adminer)
+# Open http://localhost:8080
+# Server: mysql
+# Username: chobo_user
+# Password: chobo_password
+# Database: chobo_db
+
+# Stop all services
+docker-compose down
+
+# Clean everything (including database)
+docker-compose down -v
+```
+
+#### Development Mode (without Docker)
+```bash
+# Install dependencies
+npm install
+
+# Create .env file from example
+cp .env.example .env
+
+# Edit .env with your database credentials
+
+# Run in watch mode with auto-reload
+npm run dev
 ```
 
 #### Production Mode
@@ -167,7 +220,7 @@ yarn watch
 npm run build
 
 # Start the production server
-node dist/app.js
+npm start
 ```
 
 ## 📚 API Documentation
