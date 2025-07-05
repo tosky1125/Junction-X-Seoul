@@ -1,0 +1,68 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: chobo-server
+    restart: unless-stopped
+    ports:
+      - '3000:3000'
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_USER: chobo_user
+      DB_PASSWORD: chobo_password
+      DB_NAME: chobo_db
+    depends_on:
+      mysql:
+        condition: service_healthy
+    networks:
+      - chobo-network
+    volumes:
+      - ./logs:/app/logs
+
+  mysql:
+    image: mysql:8.0
+    container_name: chobo-mysql
+    restart: unless-stopped
+    ports:
+      - '3306:3306'
+    environment:
+      MYSQL_ROOT_PASSWORD: root_password
+      MYSQL_DATABASE: chobo_db
+      MYSQL_USER: chobo_user
+      MYSQL_PASSWORD: chobo_password
+    volumes:
+      - mysql-data:/var/lib/mysql
+      - ./docker/mysql/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - chobo-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      timeout: 20s
+      retries: 10
+
+  # Development database admin tool
+  adminer:
+    image: adminer
+    container_name: chobo-adminer
+    restart: unless-stopped
+    ports:
+      - '8080:8080'
+    networks:
+      - chobo-network
+    depends_on:
+      - mysql
+    profiles:
+      - dev
+
+networks:
+  chobo-network:
+    driver: bridge
+
+volumes:
+  mysql-data:
