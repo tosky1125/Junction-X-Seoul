@@ -1,38 +1,47 @@
-import { Request, Response, Router } from 'express';
+import { Request, Response } from 'express';
+import { BaseController } from '../common/base/BaseController';
+import { asyncHandler } from '../common/middleware';
+import { validate } from '../common/middleware';
+import { ResponseHandler } from '../common/utils/responseHandler';
+import { AppError } from '../common/errors/AppError';
 import { GetUserByUserId } from './service/GetUserByUserId';
-import { StatusCode } from '../infra/StatusCode';
-import { ResponseResult } from '../infra/ResponseResult';
 import { UserNotExistError } from './error/UserNotExistError';
-import { InternalServerError } from '../infra/InternalServerError';
 
-class UserController {
-  getRouter():Router {
-    const router = Router();
-    router.get('/api/v1/users/:id', this.getUserById);
-    return router;
+class UserController extends BaseController {
+  protected initializeRoutes(): void {
+    // GET /api/users/:userId
+    this.router.get(
+      '/:userId',
+      validate([
+        {
+          field: 'userId',
+          required: true,
+          custom: (value) => !isNaN(Number(value)) && Number(value) > 0,
+          message: 'User ID must be a positive number',
+        },
+      ], 'params'),
+      asyncHandler(this.getUserById.bind(this)),
+    );
+
+    // TODO: Add more routes
+    // POST /api/users - Create user
+    // PUT /api/users/:userId - Update user
+    // DELETE /api/users/:userId - Delete user
+    // GET /api/users - List users with pagination
   }
 
-  async getUserById(req:Request, res:Response) {
-    const userId = req.params.id;
+  private async getUserById(req: Request, res: Response): Promise<Response> {
+    const userId = Number(req.params['userId']);
     const service = new GetUserByUserId();
+
     try {
-      const user = await service.execute(Number(userId));
-      res.status(StatusCode.OK).json({
-        result: ResponseResult.Success,
-        data: user,
-      });
-    } catch (e) {
-      if (e instanceof UserNotExistError) {
-        res.status(StatusCode.Notfound).json({
-          result: ResponseResult.Fail,
-          message: e.message,
-        });
+      const user = await service.execute(userId);
+      return ResponseHandler.success(res, user);
+    } catch (error) {
+      if (error instanceof UserNotExistError) {
+        throw AppError.notFound(error.message);
       }
-      console.log(e);
-      res.status(StatusCode.ServerError).json({
-        result: ResponseResult.Fail,
-        message: new InternalServerError().message,
-      });
+      throw error;
     }
   }
 }

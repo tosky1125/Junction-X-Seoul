@@ -13,6 +13,7 @@ import { AppError } from './common/errors/AppError';
 import UserController from './user/UserController';
 import DrivingRecordController from './DrivingRecord/DrivingRecordController';
 import TmapController from './TMap/TmapController';
+import CarController from './car/CarController';
 
 class App {
   private app: Application;
@@ -63,6 +64,7 @@ class App {
     this.app.use('/api/users', UserController.getRouter());
     this.app.use('/api/driving-records', DrivingRecordController.getRouter());
     this.app.use('/api/tmap', TmapController.getRouter());
+    this.app.use('/api/cars', CarController.getRouter());
 
     // 404 handler
     this.app.use('*', (req, _res, _next) => {

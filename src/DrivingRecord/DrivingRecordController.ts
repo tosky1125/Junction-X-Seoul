@@ -1,83 +1,101 @@
-import { Request, Response, Router } from 'express';
+import { Request, Response } from 'express';
+import { BaseController } from '../common/base/BaseController';
+import { asyncHandler, validate } from '../common/middleware';
+import { ResponseHandler } from '../common/utils/responseHandler';
+import { AppError } from '../common/errors/AppError';
 import { GetRecordsByUserId } from './service/GetRecordsByUserId';
-import { StatusCode } from '../infra/StatusCode';
-import { ResponseResult } from '../infra/ResponseResult';
-import { UserNotExistError } from '../user/error/UserNotExistError';
-import { InternalServerError } from '../infra/InternalServerError';
 import { GetPracticalCourse } from './service/GetPracticalCourse';
 import { InsertDrivingRecord } from './service/InsertDrivingRecord';
+import { UserNotExistError } from '../user/error/UserNotExistError';
 import { PayloadValidationError } from '../infra/PayloadValidationError';
 
-class DrivingRecordController {
-  getRouter():Router {
-    const router = Router();
-    router.post('/api/v1/records', this.insertRecord);
-    router.get('/api/v1/records/practical', this.getPracticalCourse);
-    router.get('/api/v1/records/:userId', this.getRecordByUserId);
-    return router;
+class DrivingRecordController extends BaseController {
+  protected initializeRoutes(): void {
+    // POST /api/driving-records
+    this.router.post(
+      '/',
+      validate([
+        {
+          field: 'userId',
+          required: true,
+          type: 'number',
+          message: 'User ID is required and must be a number',
+        },
+        {
+          field: 'courseId',
+          required: true,
+          type: 'number',
+          message: 'Course ID is required and must be a number',
+        },
+        {
+          field: 'startTime',
+          required: true,
+          type: 'string',
+          message: 'Start time is required',
+        },
+        {
+          field: 'endTime',
+          required: true,
+          type: 'string',
+          message: 'End time is required',
+        },
+      ]),
+      asyncHandler(this.insertRecord.bind(this)),
+    );
+
+    // GET /api/driving-records/practical-courses
+    this.router.get(
+      '/practical-courses',
+      asyncHandler(this.getPracticalCourse.bind(this)),
+    );
+
+    // GET /api/driving-records/user/:userId
+    this.router.get(
+      '/user/:userId',
+      validate([
+        {
+          field: 'userId',
+          required: true,
+          custom: (value) => !isNaN(Number(value)) && Number(value) > 0,
+          message: 'User ID must be a positive number',
+        },
+      ], 'params'),
+      asyncHandler(this.getRecordsByUserId.bind(this)),
+    );
   }
 
-  async insertRecord(req:Request, res:Response) {
+  private async insertRecord(req: Request, res: Response): Promise<Response> {
     const service = new InsertDrivingRecord();
+
     try {
-      const data = await service.execute(req.body);
-      res.status(StatusCode.OK).json({
-        result: ResponseResult.Success,
-        data,
-      });
-    } catch (e) {
-      if (e instanceof PayloadValidationError) {
-        res.status(StatusCode.BadRequest).json({
-          result: ResponseResult.Fail,
-          message: e.message,
-        });
+      const result = await service.execute(req.body);
+      return ResponseHandler.created(res, result);
+    } catch (error) {
+      if (error instanceof PayloadValidationError) {
+        throw AppError.validationError(error.message);
       }
-      console.log(e);
-      res.status(StatusCode.ServerError).json({
-        result: ResponseResult.Fail,
-        message: new InternalServerError().message,
-      });
+      throw error;
     }
   }
 
-  async getPracticalCourse(req:Request, res:Response) {
+  private async getPracticalCourse(_req: Request, res: Response): Promise<Response> {
     const service = new GetPracticalCourse();
-    try {
-      const result = await service.execute();
-      res.status(StatusCode.OK).json({
-        result: ResponseResult.Success,
-        data: result,
-      });
-    } catch (e) {
-      console.log(e);
-      res.status(StatusCode.ServerError).json({
-        result: ResponseResult.Fail,
-        message: new InternalServerError().message,
-      });
-    }
+    const result = await service.execute();
+    return ResponseHandler.success(res, result);
   }
 
-  async getRecordByUserId(req:Request, res:Response) {
-    const { userId } = req.params;
+  private async getRecordsByUserId(req: Request, res: Response): Promise<Response> {
+    const userId = Number(req.params['userId']);
     const service = new GetRecordsByUserId();
+
     try {
-      const result = await service.execute(Number(userId));
-      res.status(StatusCode.OK).json({
-        result: ResponseResult.Success,
-        data: result,
-      });
-    } catch (e) {
-      if (e instanceof UserNotExistError) {
-        res.status(StatusCode.Notfound).json({
-          result: ResponseResult.Fail,
-          message: e.message,
-        });
+      const result = await service.execute(userId);
+      return ResponseHandler.success(res, result);
+    } catch (error) {
+      if (error instanceof UserNotExistError) {
+        throw AppError.notFound(error.message);
       }
-      console.log(e);
-      res.status(StatusCode.ServerError).json({
-        result: ResponseResult.Fail,
-        message: new InternalServerError().message,
-      });
+      throw error;
     }
   }
 }
