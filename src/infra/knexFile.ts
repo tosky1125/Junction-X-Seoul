@@ -15,10 +15,10 @@ const config = {
     user,
     password,
     database,
-    typeCast(field, next) {
+    typeCast(field:{ type: string, string: () => string, length: number }, next: () => unknown) {
       if (field.type == 'TINY' && field.length == 1) {
         const value = field.string();
-        return value ? (value == '1') : null;
+        return value ? (value === '1') : null;
       }
       return next();
     },

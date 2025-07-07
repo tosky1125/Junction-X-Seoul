@@ -110,7 +110,7 @@ describe('ResponseHandler', () => {
     });
 
     it('should calculate correct total pages', () => {
-      const data = [];
+      const data: any[] = [];
       
       ResponseHandler.paginated(mockRes as Response, data, 1, 5, 12);
       

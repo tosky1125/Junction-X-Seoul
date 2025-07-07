@@ -156,7 +156,7 @@ describe('Validation Middleware', () => {
     it('should pass when custom validation returns true', () => {
       mockReq.body = { even: 4 };
       const middleware = validate([
-        { field: 'even', custom: (value) => value % 2 === 0 },
+        { field: 'even', custom: (value) => (value as number) % 2 === 0 },
       ]);
       
       middleware(mockReq as Request, mockRes as Response, mockNext);
@@ -167,7 +167,7 @@ describe('Validation Middleware', () => {
     it('should fail when custom validation returns false', () => {
       mockReq.body = { even: 3 };
       const middleware = validate([
-        { field: 'even', custom: (value) => value % 2 === 0, message: 'Must be even' },
+        { field: 'even', custom: (value) => (value as number) % 2 === 0, message: 'Must be even' },
       ]);
       
       expect(() => {
