@@ -1,6 +1,6 @@
 # Chobo Server 🚗
 
-> A driving practice tracking service for novice drivers - Junction X Seoul 2021 Hackathon Project
+> A driving practice tracking service for novice drivers - Junction X Seoul 2021 24Hour Hackathon Project
 
 ## 📋 Table of Contents
 
